@@ -2,8 +2,8 @@
 Created on 2015/05/18
 @author: hosoai
 '''
-from _ctypes import Structure
-from ctypes import c_byte, c_ubyte, c_short, c_ushort
+from _ctypes import Structure, sizeof, byref
+from ctypes import c_byte, c_ubyte, c_short, c_ushort, c_char, memmove
 
 PACKET_LENGTH = 80
 
@@ -62,7 +62,65 @@ class Sensor(Structure):
     ("mainBrushCurrent",c_short),
     ("sideBrushCurrent",c_short),
     ("stasis",c_ubyte)]
-
+    
+    def __init__(self):
+        bumpsWheeldrops = 0
+        wall = 0
+        cliLeft = 0
+        cliFrontLeft = 0
+        cliFrontRight = 0
+        cliRight = 0
+        virtualWall = 0
+        overcurrents = 0
+        dirtDetect = 0
+        unused1 = 0
+        irOpcode = 0
+        buttons = 0
+        distance = 0
+        angle = 0
+        chargingState = 0
+        voltage = 0
+        current = 0
+        temperature = 0
+        batteryCharge = 0
+        batteryCapacity = 0
+        wallSignal = 0
+        cliLeftSignal = 0
+        cliFrontLeftSignal = 0
+        cliFrontRightSignal = 0
+        cliRightSignal = 0
+        unused2 = 0
+        unused3 = 0
+        chargerAvailable = 0
+        openInterfaceMode = 0
+        songNumber = 0
+        songPlaying = 0
+        oiStreamNumPackets = 0
+        velocity = 0
+        radius = 0
+        velocityRight = 0
+        velocityLeft = 0
+        encoderCountsLeft = 0
+        encoderCountsRight = 0
+        lightBumper = 0
+        lightBumpLeft = 0
+        lightBumpFrontLeft = 0
+        lightBumpCenterLeft = 0
+        lightBumpCenterRight = 0
+        lightBumpFrontRight = 0
+        lightBumpRight = 0
+        irOpcodeLeft = 0
+        irOpcodeRight = 0
+        leftMotorCurrent = 0
+        rightMotorCurrent = 0
+        mainBrushCurrent = 0
+        sideBrushCurrent = 0
+        stasis = 0
+    
+    def toByteArray(self, f):
+        buf = (c_char*80)
+        memoryview(buf)[:sizeof(f)] = (c_char*sizeof(f)).from_buffer(f)
+#        memmove(buf, byref(f), sizeof(f))
     @staticmethod
     def genFromBytes(data):
         return Sensor.from_buffer_copy(data)
@@ -175,3 +233,7 @@ class Event(enumerate):
     changeMainBrushCurrent = 50
     changeSideBrushCurrent = 51
     changeStasis = 52
+
+sensor = Sensor()
+print sensor.stasis
+print sensor.toByteArray(sensor)
