@@ -12,7 +12,7 @@ dummyData = "\x0F\x01\x01\x01\x01\x01\x01\x1D\xFF\xFF\xFF\xFF\xFF\x7F\xFF\x7F\x0
 
 serial = serial.Serial(port="COM5",baudrate=baudrate, timeout=SERIAL_TIMEOUT)
 while(True):
-    data = serial.read(1)
+    data = serial.read(2)
     if len(data)!=0:
         print data
         serial.write(dummyData)

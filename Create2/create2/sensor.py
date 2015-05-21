@@ -5,6 +5,8 @@ Created on 2015/05/18
 from _ctypes import Structure
 from ctypes import c_byte, c_ubyte, c_short, c_ushort
 
+PACKET_LENGTH = 80
+
 class Sensor(Structure):
     _pack_ = 1
     _fields_ = [
@@ -64,8 +66,112 @@ class Sensor(Structure):
     @staticmethod
     def genFromBytes(data):
         return Sensor.from_buffer_copy(data)
+    
+    def diff(self, other):
+        eventList = []
+        if self.bumpsWheeldrops != other.bumpsWheeldrops : eventList += Event.changeBumpsWheeldrops
+        if self.wall != other.wall : eventList += Event.changeWall
+        if self.cliLeft != other.cliLeft : eventList += Event.changeCliLeft
+        if self.cliFrontLeft != other.cliFrontLeft : eventList += Event.changeCliFrontLeft
+        if self.cliFrontRight != other.cliFrontRight : eventList += Event.changeCliFrontRight
+        if self.cliRight != other.cliRight : eventList += Event.changeCliRight
+        if self.virtualWall != other.virtualWall : eventList += Event.changeVirtualWall
+        if self.overcurrents != other.overcurrents : eventList += Event.changeOvercurrents
+        if self.dirtDetect != other.dirtDetect : eventList += Event.changeDirtDetect
+        if self.unused1 != other.unused1 : eventList += Event.changeUnused
+        if self.irOpcode != other.irOpcode : eventList += Event.changeIrOpcode
+        if self.buttons != other.buttons : eventList += Event.changeButtons
+        if self.distance != other.distance : eventList += Event.changeDistance
+        if self.angle != other.angle : eventList += Event.changeAngle
+        if self.chargingState != other.chargingState : eventList += Event.changeChargingState
+        if self.voltage != other.voltage : eventList += Event.changeVoltage
+        if self.current != other.current : eventList += Event.changeCurrent
+        if self.temperature != other.temperature : eventList += Event.changeTemperature
+        if self.batteryCharge != other.batteryCharge : eventList += Event.changeBatteryCharge
+        if self.batteryCapacity != other.batteryCapacity : eventList += Event.changeBatteryCapacity
+        if self.wallSignal != other.wallSignal : eventList += Event.changeWallSignal
+        if self.cliLeftSignal != other.cliLeftSignal : eventList += Event.changeCliLeftSignal
+        if self.cliFrontLeftSignal != other.cliFrontLeftSignal : eventList += Event.changeCliFrontLeftSignal
+        if self.cliFrontRightSignal != other.cliFrontRightSignal : eventList += Event.changeCliFrontRightSignal
+        if self.cliRightSignal != other.cliRightSignal : eventList += Event.changeCliRightSignal
+        if self.unused2 != other.unused2 : eventList += Event.changeUnused
+        if self.unused3 != other.unused3 : eventList += Event.changeUnused
+        if self.chargerAvailable != other.chargerAvailable : eventList += Event.changeChargerAvailable
+        if self.openInterfaceMode != other.openInterfaceMode : eventList += Event.changeOpenInterfaceMode
+        if self.songNumber != other.songNumber : eventList += Event.changeSongNumber
+        if self.songPlaying != other.songPlaying : eventList += Event.changeSongPlaying
+        if self.oiStreamNumPackets != other.oiStreamNumPackets : eventList += Event.changeOiStreamNumPackets
+        if self.velocity != other.velocity : eventList += Event.changeVelocity
+        if self.radius != other.radius : eventList += Event.changeRadius
+        if self.velocityRight != other.velocityRight : eventList += Event.changeVelocityRight
+        if self.velocityLeft != other.velocityLeft : eventList += Event.changeVelocityLeft
+        if self.encoderCountsLeft != other.encoderCountsLeft : eventList += Event.changeEncoderCountsLeft
+        if self.encoderCountsRight != other.encoderCountsRight : eventList += Event.changeEncoderCountsRight
+        if self.lightBumper != other.lightBumper : eventList += Event.changeLightBumper
+        if self.lightBumpLeft != other.lightBumpLeft : eventList += Event.changeLightBumpLeft
+        if self.lightBumpFrontLeft != other.lightBumpFrontLeft : eventList += Event.changeLightBumpFrontLeft
+        if self.lightBumpCenterLeft != other.lightBumpCenterLeft : eventList += Event.changeLightBumpCenterLeft
+        if self.lightBumpCenterRight != other.lightBumpCenterRight : eventList += Event.changeLightBumpCenterRight
+        if self.lightBumpFrontRight != other.lightBumpFrontRight : eventList += Event.changeLightBumpFrontRight
+        if self.lightBumpRight != other.lightBumpRight : eventList += Event.changeLightBumpRight
+        if self.irOpcodeLeft != other.irOpcodeLeft : eventList += Event.changeIrOpcodeLeft
+        if self.irOpcodeRight != other.irOpcodeRight : eventList += Event.changeIrOpcodeRight
+        if self.leftMotorCurrent != other.leftMotorCurrent : eventList += Event.changeLeftMotorCurrent
+        if self.rightMotorCurrent != other.rightMotorCurrent : eventList += Event.changeRightMotorCurrent
+        if self.mainBrushCurrent != other.mainBrushCurrent : eventList += Event.changeMainBrushCurrent
+        if self.sideBrushCurrent != other.sideBrushCurrent : eventList += Event.changeSideBrushCurrent
+        if self.stasis != other.stasis : eventList += Event.changeStasis
 
-class Types(enumerate):
-    red=1
-    blue=2
-    yellow=4
+class Event(enumerate):
+    changeBumpsWheeldrops = 1
+    changeWall = 2
+    changeCliLeft = 3
+    changeCliFrontLeft = 4
+    changeCliFrontRight = 5
+    changeCliRight = 6
+    changeVirtualWall = 7
+    changeOvercurrents = 8
+    changeDirtDetect = 9
+    changeUnused1 = 10
+    changeIrOpcode = 11
+    changeButtons = 12
+    changeDistance = 13
+    changeAngle = 14
+    changeChargingState = 15
+    changeVoltage = 16
+    changeCurrent = 17
+    changeTemperature = 18
+    changeBatteryCharge = 19
+    changeBatteryCapacity = 20
+    changeWallSignal = 21
+    changeCliLeftSignal = 22
+    changeCliFrontLeftSignal = 23
+    changeCliFrontRightSignal = 24
+    changeCliRightSignal = 25
+    changeUnused2 = 26
+    changeUnused3 = 27
+    changeChargerAvailable = 28
+    changeOpenInterfaceMode = 29
+    changeSongNumber = 30
+    changeSongPlaying = 31
+    changeOiStreamNumPackets = 32
+    changeVelocity = 33
+    changeRadius = 34
+    changeVelocityRight = 35
+    changeVelocityLeft = 36
+    changeEncoderCountsLeft = 37
+    changeEncoderCountsRight = 38
+    changeLightBumper = 39
+    changeLightBumpLeft = 40
+    changeLightBumpFrontLeft = 41
+    changeLightBumpCenterLeft = 42
+    changeLightBumpCenterRight = 43
+    changeLightBumpFrontRight = 44
+    changeLightBumpRight = 45
+    changeIrOpcodeLeft = 46
+    changeIrOpcodeRight = 47
+    changeLeftMotorCurrent = 48
+    changeRightMotorCurrent = 49
+    changeMainBrushCurrent = 50
+    changeSideBrushCurrent = 51
+    changeStasis = 52
