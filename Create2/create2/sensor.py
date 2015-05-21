@@ -72,7 +72,7 @@ class Sensor(Structure):
         if self.bumpsWheeldrops != other.bumpsWheeldrops : eventList += Event.changeBumpsWheeldrops
         if self.wall != other.wall : eventList += Event.changeWall
         if self.cliLeft != other.cliLeft : eventList += Event.changeCliLeft
-        if self.cliFrontLeft != other.cliFrontLeft : eventList += Event.changeCliFrontLeft
+        if self.cliFrontLeft != other.cliFrontLeft : eventList += Event.changeCliFrontLeft #
         if self.cliFrontRight != other.cliFrontRight : eventList += Event.changeCliFrontRight
         if self.cliRight != other.cliRight : eventList += Event.changeCliRight
         if self.virtualWall != other.virtualWall : eventList += Event.changeVirtualWall
