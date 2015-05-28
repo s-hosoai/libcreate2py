@@ -122,17 +122,11 @@ class Opcode(object):
         """
         if name in self.opcodes:
             def SendOpcode(*bytes):
-                self.Send([self.opcodes[name]] + list(bytes))
+                self.sci.Send([self.opcodes[name]] + list(bytes))
             return SendOpcode
             raise AttributeError
-
-    def Send(self, bytes):
-        pass
-#        with self.lock:
-#            pass
-#            self.ser.write(struct.pack('B' * len(bytes), *bytes))
     
-    def __init__(self, serial):
-        self.sci = serial
+    def __init__(self, sci):
+        self.sci = sci
         self.opcodes = {}
         self.opcodes.update(CREATE_OPCODES)

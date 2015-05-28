@@ -12,9 +12,6 @@ print sensor.current
 # create2 tuning parameters
 
 
-
-
-
 BAUDRATE = 115200
 SERIAL_TIMEOUT  = 2
 INTERVAL = 1
@@ -39,10 +36,3 @@ class Create2:
     
     def AddSensorEventListener(self, listener):
         self.observer.addListener(listener)
-
-def myListener(eventList):
-    print "Event Raised!"
-
-create2 = Create2(tty="COM6")
-create2.AddSensorEventListener(myListener)
-

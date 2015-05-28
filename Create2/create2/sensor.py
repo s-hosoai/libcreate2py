@@ -62,123 +62,127 @@ class Sensor(Structure):
     ("mainBrushCurrent",c_short),
     ("sideBrushCurrent",c_short),
     ("stasis",c_ubyte)]
-    
+
     def __init__(self):
-        bumpsWheeldrops = 0
-        wall = 0
-        cliLeft = 0
-        cliFrontLeft = 0
-        cliFrontRight = 0
-        cliRight = 0
-        virtualWall = 0
-        overcurrents = 0
-        dirtDetect = 0
-        unused1 = 0
-        irOpcode = 0
-        buttons = 0
-        distance = 0
-        angle = 0
-        chargingState = 0
-        voltage = 0
-        current = 0
-        temperature = 0
-        batteryCharge = 0
-        batteryCapacity = 0
-        wallSignal = 0
-        cliLeftSignal = 0
-        cliFrontLeftSignal = 0
-        cliFrontRightSignal = 0
-        cliRightSignal = 0
-        unused2 = 0
-        unused3 = 0
-        chargerAvailable = 0
-        openInterfaceMode = 0
-        songNumber = 0
-        songPlaying = 0
-        oiStreamNumPackets = 0
-        velocity = 0
-        radius = 0
-        velocityRight = 0
-        velocityLeft = 0
-        encoderCountsLeft = 0
-        encoderCountsRight = 0
-        lightBumper = 0
-        lightBumpLeft = 0
-        lightBumpFrontLeft = 0
-        lightBumpCenterLeft = 0
-        lightBumpCenterRight = 0
-        lightBumpFrontRight = 0
-        lightBumpRight = 0
-        irOpcodeLeft = 0
-        irOpcodeRight = 0
-        leftMotorCurrent = 0
-        rightMotorCurrent = 0
-        mainBrushCurrent = 0
-        sideBrushCurrent = 0
-        stasis = 0
-    
-    def toByteArray(self, f):
-        buf = (c_char*80)
-        memoryview(buf)[:sizeof(f)] = (c_char*sizeof(f)).from_buffer(f)
+        self.bumpsWheeldrops = 0
+        self.wall = 0
+        self.cliLeft = 0
+        self.cliFrontLeft = 0
+        self.cliFrontRight = 0
+        self.cliRight = 0
+        self.virtualWall = 0
+        self.overcurrents = 0
+        self.dirtDetect = 0
+        self.unused1 = 0
+        self.irOpcode = 0
+        self.buttons = 0
+        self.distance = 0
+        self.angle = 0
+        self.chargingState = 0
+        self.voltage = 0
+        self.current = 0
+        self.temperature = 0
+        self.batteryCharge = 0
+        self.batteryCapacity = 0
+        self.wallSignal = 0
+        self.cliLeftSignal = 0
+        self.cliFrontLeftSignal = 0
+        self.cliFrontRightSignal = 0
+        self.cliRightSignal = 0
+        self.unused2 = 0
+        self.unused3 = 0
+        self.chargerAvailable = 0
+        self.openInterfaceMode = 0
+        self.songNumber = 0
+        self.songPlaying = 0
+        self.oiStreamNumPackets = 0
+        self.velocity = 0
+        self.radius = 0
+        self.velocityRight = 0
+        self.velocityLeft = 0
+        self.encoderCountsLeft = 0
+        self.encoderCountsRight = 0
+        self.lightBumper = 0
+        self.lightBumpLeft = 0
+        self.lightBumpFrontLeft = 0
+        self.lightBumpCenterLeft = 0
+        self.lightBumpCenterRight = 0
+        self.lightBumpFrontRight = 0
+        self.lightBumpRight = 0
+        self.irOpcodeLeft = 0
+        self.irOpcodeRight = 0
+        self.leftMotorCurrent = 0
+        self.rightMotorCurrent = 0
+        self.mainBrushCurrent = 0
+        self.sideBrushCurrent = 0
+        self.stasis = 0
+
+    def toByteArray(self):
+        return buffer(self)[:]
+#        buf = (c_char*80)
+#        memoryview(buf)[:sizeof(f)] = (c_char*sizeof(f)).from_buffer(f)
 #        memmove(buf, byref(f), sizeof(f))
     @staticmethod
     def genFromBytes(data):
+        if len(data)!=sizeof(Sensor):
+            return None # or RaiseException
         return Sensor.from_buffer_copy(data)
     
     def diff(self, other):
         eventList = []
-        if self.bumpsWheeldrops != other.bumpsWheeldrops : eventList += Event.changeBumpsWheeldrops
-        if self.wall != other.wall : eventList += Event.changeWall
-        if self.cliLeft != other.cliLeft : eventList += Event.changeCliLeft
-        if self.cliFrontLeft != other.cliFrontLeft : eventList += Event.changeCliFrontLeft #
-        if self.cliFrontRight != other.cliFrontRight : eventList += Event.changeCliFrontRight
-        if self.cliRight != other.cliRight : eventList += Event.changeCliRight
-        if self.virtualWall != other.virtualWall : eventList += Event.changeVirtualWall
-        if self.overcurrents != other.overcurrents : eventList += Event.changeOvercurrents
-        if self.dirtDetect != other.dirtDetect : eventList += Event.changeDirtDetect
-        if self.unused1 != other.unused1 : eventList += Event.changeUnused
-        if self.irOpcode != other.irOpcode : eventList += Event.changeIrOpcode
-        if self.buttons != other.buttons : eventList += Event.changeButtons
-        if self.distance != other.distance : eventList += Event.changeDistance
-        if self.angle != other.angle : eventList += Event.changeAngle
-        if self.chargingState != other.chargingState : eventList += Event.changeChargingState
-        if self.voltage != other.voltage : eventList += Event.changeVoltage
-        if self.current != other.current : eventList += Event.changeCurrent
-        if self.temperature != other.temperature : eventList += Event.changeTemperature
-        if self.batteryCharge != other.batteryCharge : eventList += Event.changeBatteryCharge
-        if self.batteryCapacity != other.batteryCapacity : eventList += Event.changeBatteryCapacity
-        if self.wallSignal != other.wallSignal : eventList += Event.changeWallSignal
-        if self.cliLeftSignal != other.cliLeftSignal : eventList += Event.changeCliLeftSignal
-        if self.cliFrontLeftSignal != other.cliFrontLeftSignal : eventList += Event.changeCliFrontLeftSignal
-        if self.cliFrontRightSignal != other.cliFrontRightSignal : eventList += Event.changeCliFrontRightSignal
-        if self.cliRightSignal != other.cliRightSignal : eventList += Event.changeCliRightSignal
-        if self.unused2 != other.unused2 : eventList += Event.changeUnused
-        if self.unused3 != other.unused3 : eventList += Event.changeUnused
-        if self.chargerAvailable != other.chargerAvailable : eventList += Event.changeChargerAvailable
-        if self.openInterfaceMode != other.openInterfaceMode : eventList += Event.changeOpenInterfaceMode
-        if self.songNumber != other.songNumber : eventList += Event.changeSongNumber
-        if self.songPlaying != other.songPlaying : eventList += Event.changeSongPlaying
-        if self.oiStreamNumPackets != other.oiStreamNumPackets : eventList += Event.changeOiStreamNumPackets
-        if self.velocity != other.velocity : eventList += Event.changeVelocity
-        if self.radius != other.radius : eventList += Event.changeRadius
-        if self.velocityRight != other.velocityRight : eventList += Event.changeVelocityRight
-        if self.velocityLeft != other.velocityLeft : eventList += Event.changeVelocityLeft
-        if self.encoderCountsLeft != other.encoderCountsLeft : eventList += Event.changeEncoderCountsLeft
-        if self.encoderCountsRight != other.encoderCountsRight : eventList += Event.changeEncoderCountsRight
-        if self.lightBumper != other.lightBumper : eventList += Event.changeLightBumper
-        if self.lightBumpLeft != other.lightBumpLeft : eventList += Event.changeLightBumpLeft
-        if self.lightBumpFrontLeft != other.lightBumpFrontLeft : eventList += Event.changeLightBumpFrontLeft
-        if self.lightBumpCenterLeft != other.lightBumpCenterLeft : eventList += Event.changeLightBumpCenterLeft
-        if self.lightBumpCenterRight != other.lightBumpCenterRight : eventList += Event.changeLightBumpCenterRight
-        if self.lightBumpFrontRight != other.lightBumpFrontRight : eventList += Event.changeLightBumpFrontRight
-        if self.lightBumpRight != other.lightBumpRight : eventList += Event.changeLightBumpRight
-        if self.irOpcodeLeft != other.irOpcodeLeft : eventList += Event.changeIrOpcodeLeft
-        if self.irOpcodeRight != other.irOpcodeRight : eventList += Event.changeIrOpcodeRight
-        if self.leftMotorCurrent != other.leftMotorCurrent : eventList += Event.changeLeftMotorCurrent
-        if self.rightMotorCurrent != other.rightMotorCurrent : eventList += Event.changeRightMotorCurrent
-        if self.mainBrushCurrent != other.mainBrushCurrent : eventList += Event.changeMainBrushCurrent
-        if self.sideBrushCurrent != other.sideBrushCurrent : eventList += Event.changeSideBrushCurrent
-        if self.stasis != other.stasis : eventList += Event.changeStasis
+        if self.bumpsWheeldrops != other.bumpsWheeldrops : eventList.append(Event.changeBumpsWheeldrops)
+        if self.wall != other.wall : eventList.append(Event.changeWall)
+        if self.cliLeft != other.cliLeft : eventList.append(Event.changeCliLeft)
+        if self.cliFrontLeft != other.cliFrontLeft : eventList.append(Event.changeCliFrontLeft)
+        if self.cliFrontRight != other.cliFrontRight : eventList.append(Event.changeCliFrontRight)
+        if self.cliRight != other.cliRight : eventList.append(Event.changeCliRight)
+        if self.virtualWall != other.virtualWall : eventList.append(Event.changeVirtualWall)
+        if self.overcurrents != other.overcurrents : eventList.append(Event.changeOvercurrents)
+        if self.dirtDetect != other.dirtDetect : eventList.append(Event.changeDirtDetect)
+        if self.unused1 != other.unused1 : eventList.append(Event.changeUnused)
+        if self.irOpcode != other.irOpcode : eventList.append(Event.changeIrOpcode)
+        if self.buttons != other.buttons : eventList.append(Event.changeButtons)
+        if self.distance != other.distance : eventList.append(Event.changeDistance)
+        if self.angle != other.angle : eventList.append(Event.changeAngle)
+        if self.chargingState != other.chargingState : eventList.append(Event.changeChargingState)
+        if self.voltage != other.voltage : eventList.append(Event.changeVoltage)
+        if self.current != other.current : eventList.append(Event.changeCurrent)
+        if self.temperature != other.temperature : eventList.append(Event.changeTemperature)
+        if self.batteryCharge != other.batteryCharge : eventList.append(Event.changeBatteryCharge)
+        if self.batteryCapacity != other.batteryCapacity : eventList.append(Event.changeBatteryCapacity)
+        if self.wallSignal != other.wallSignal : eventList.append(Event.changeWallSignal)
+        if self.cliLeftSignal != other.cliLeftSignal : eventList.append(Event.changeCliLeftSignal)
+        if self.cliFrontLeftSignal != other.cliFrontLeftSignal : eventList.append(Event.changeCliFrontLeftSignal)
+        if self.cliFrontRightSignal != other.cliFrontRightSignal : eventList.append(Event.changeCliFrontRightSignal)
+        if self.cliRightSignal != other.cliRightSignal : eventList.append(Event.changeCliRightSignal)
+        if self.unused2 != other.unused2 : eventList.append(Event.changeUnused)
+        if self.unused3 != other.unused3 : eventList.append(Event.changeUnused)
+        if self.chargerAvailable != other.chargerAvailable : eventList.append(Event.changeChargerAvailable)
+        if self.openInterfaceMode != other.openInterfaceMode : eventList.append(Event.changeOpenInterfaceMode)
+        if self.songNumber != other.songNumber : eventList.append(Event.changeSongNumber)
+        if self.songPlaying != other.songPlaying : eventList.append(Event.changeSongPlaying)
+        if self.oiStreamNumPackets != other.oiStreamNumPackets : eventList.append(Event.changeOiStreamNumPackets)
+        if self.velocity != other.velocity : eventList.append(Event.changeVelocity)
+        if self.radius != other.radius : eventList.append(Event.changeRadius)
+        if self.velocityRight != other.velocityRight : eventList.append(Event.changeVelocityRight)
+        if self.velocityLeft != other.velocityLeft : eventList.append(Event.changeVelocityLeft)
+        if self.encoderCountsLeft != other.encoderCountsLeft : eventList.append(Event.changeEncoderCountsLeft)
+        if self.encoderCountsRight != other.encoderCountsRight : eventList.append(Event.changeEncoderCountsRight)
+        if self.lightBumper != other.lightBumper : eventList.append(Event.changeLightBumper)
+        if self.lightBumpLeft != other.lightBumpLeft : eventList.append(Event.changeLightBumpLeft)
+        if self.lightBumpFrontLeft != other.lightBumpFrontLeft : eventList.append(Event.changeLightBumpFrontLeft)
+        if self.lightBumpCenterLeft != other.lightBumpCenterLeft : eventList.append(Event.changeLightBumpCenterLeft)
+        if self.lightBumpCenterRight != other.lightBumpCenterRight : eventList.append(Event.changeLightBumpCenterRight)
+        if self.lightBumpFrontRight != other.lightBumpFrontRight : eventList.append(Event.changeLightBumpFrontRight)
+        if self.lightBumpRight != other.lightBumpRight : eventList.append(Event.changeLightBumpRight)
+        if self.irOpcodeLeft != other.irOpcodeLeft : eventList.append(Event.changeIrOpcodeLeft)
+        if self.irOpcodeRight != other.irOpcodeRight : eventList.append(Event.changeIrOpcodeRight)
+        if self.leftMotorCurrent != other.leftMotorCurrent : eventList.append(Event.changeLeftMotorCurrent)
+        if self.rightMotorCurrent != other.rightMotorCurrent : eventList.append(Event.changeRightMotorCurrent)
+        if self.mainBrushCurrent != other.mainBrushCurrent : eventList.append(Event.changeMainBrushCurrent)
+        if self.sideBrushCurrent != other.sideBrushCurrent : eventList.append(Event.changeSideBrushCurrent)
+        if self.stasis != other.stasis : eventList.append(Event.changeStasis)
+        return eventList
 
 class Event(enumerate):
     changeBumpsWheeldrops = 1
@@ -234,6 +238,8 @@ class Event(enumerate):
     changeSideBrushCurrent = 51
     changeStasis = 52
 
-sensor = Sensor()
-print sensor.stasis
-print sensor.toByteArray(sensor)
+#sensor = Sensor()
+#sensor.cliLeft = 1
+#print sensor.toByteArray()
+#sensor2 = Sensor.genFromBytes(sensor.toByteArray())
+#print sensor2.cliLeft
