@@ -4,6 +4,7 @@ import sensorObserver
 import serial
 import time
 import sci
+import struct
 
 data = "\x0F\x01\x01\x01\x01\x01\x01\x1D\xFF\xFF\xFF\xFF\xFF\x7F\xFF\x7F\x06\xFF\xFF\xFF\x7F\x7F\xFF\xFF\xFF\xFF\xFF\x03\xFF\x0F\xFF\x0F\xFF\x0F\xFF\x0F\xFF\xFF\xFF\x03\x03\x04\x01\x6C\xF4\x01\xFF\x7F\xF4\x01\xF4\x01\xFF\xFF\xFF\xFF\x7F\xFF\x0F\xFF\x0F\xFF\x0F\xFF\x0F\xFF\x0F\xFF\x0F\xFF\xFF\xFF\x7F\xFF\x7F\xFF\x7F\xFF\x7F\x01"
 sensor = sensor.Sensor.genFromBytes(data)
@@ -24,11 +25,11 @@ class Create2:
             self.observer = sensorObserver.SensorObserver(self.sci, INTERVAL)
             self.observer.start()
 
-    def DriveStright(self, velocity):
-        self.opcode.drive()
-    
-    def DriveStrightWithDistance(self, velocity, distance):
-        self.opcode.drive()
+    def Drive(self, velocity, radius):
+        velocity = int(velocity) & 0xffff
+        radius = int(radius) & 0xffff
+        bytes = struct.unpack('4B', struct.pack('>2H', velocity, radius))
+        self.sci.drive(*bytes)
 
     def GetAllRawSensorData(self):
         return self.observer.getRawSensor()
@@ -37,4 +38,5 @@ class Create2:
         self.observer.addListener(listener)
 
 create2 = Create2()
-time.sleep(10)
+time.sleep(3)
+create2.Drive(100, 200)
