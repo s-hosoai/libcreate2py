@@ -3,17 +3,17 @@ Created on 2015/05/18
 
 @author: hosoai
 '''
-from threading import Thread
-from time import sleep
-from create2.sensor import Sensor, PACKET_LENGTH
+import threading
+import time
+import sensor
 
-class SensorObserver(Thread):
+class SensorObserver(threading.Thread):
     def __init__(self, sci, interval):
         super(SensorObserver, self).__init__()
         self.sci = sci
         self.interval = interval
         self.running = True
-        self.prevSensor = Sensor()
+        self.prevSensor = sensor.Sensor()
         self.listeners = []
 
     def addListener(self, listener):
@@ -41,14 +41,15 @@ class SensorObserver(Thread):
     def run(self):
         while(self.running):
             self.requestSensor()
-            self.data = self.sci.Read(PACKET_LENGTH)
-            self.sensor = Sensor.genFromBytes(self.data)
+            self.data = self.sci.Read(80)
+            self.sensor = sensor.Sensor.genFromBytes(self.data)
             if self.prevSensor != None:
                 eventList = self.sensor.diff(self.prevSensor)
                 if (eventList != None and len(eventList)>0):
                     self.raiseEvent(eventList)
             self.prevSensor = self.sensor
-            sleep(self.interval)
+            print self.sensor.bumpsWheeldrops
+            time.sleep(self.interval)
 
 # test
 #observer = SensorObserver(serial.Serial("COM6", baudrate=115200, timeout=2), 1)
