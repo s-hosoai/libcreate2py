@@ -3,13 +3,14 @@ Created on 2015/05/21
 
 @author: hosoai
 '''
-import sys, time
-from threading import Thread
-from sensor import Sensor
-from serial import Serial
+import sys
+import time
+import threading
+import sensor
+import serial
 import os
 
-class SendThread(Thread):
+class SendThread(threading.Thread):
     def __init__(self, sensor):
         super(SendThread, self).__init__()
         self.running = True
@@ -19,13 +20,13 @@ class SendThread(Thread):
         self.running = False
 
     def run(self):
-        serial = Serial(port="COM5",baudrate=115200, timeout=2)
+        serial = serial.Serial(port="COM5",baudrate=115200, timeout=2)
         while(self.running):
             data = serial.read(2)
             if len(data)!=0:
                 serial.write(self.sensor.toByteArray())
 
-class KeyObserver(Thread):
+class KeyObserver(threading.Thread):
     def __init__(self, sensor, sender):
         super(KeyObserver, self).__init__()
         self.running = True
@@ -34,7 +35,7 @@ class KeyObserver(Thread):
         
     def stop(self):
         self.running = False
-
+        
     def run(self):
         while(self.running):
             os.system("CLS")
@@ -113,7 +114,7 @@ class KeyObserver(Thread):
                 except ValueError:
                     pass
 
-data = Sensor()
+data = sensor.Sensor()
 sender = SendThread(data)
 key = KeyObserver(data, sender)
 key.start()

@@ -3,40 +3,37 @@ Created on 2015/05/18
 @author: hosoai
 '''
 
-import struct
-from pickletools import opcodes
-from Tkconstants import OFF
 CREATE_OPCODES = dict(
-    _softReset = 7,
-    _start = 128,
-    _baud = 129,
-    _control = 130,
-    _safe = 131,
-    _full = 132,
-    _power = 133,
-    _spot = 134,
-    _clean = 135,
-    _maxClean = 136,
-    _drive = 137,
-    _motors = 138,
-    _leds = 139,
-    _song = 140,
-    _play = 141,
-    _query = 142,
-    _forceSeekingDock = 143,
-    _pwmMotors = 144,
-    _driveWheels = 145,
-    _drivePwm = 146,
-    _stream = 148,
-    _queryList = 149,
-    _doStream = 150,
-    _schedulingLeds = 162,
-    _digitLedsRaw = 163,
-    _digitLedsAscii = 164,
-    _buttons = 165,
-    _schedule = 167,
-    _setDayTime = 168,
-    _stop = 173
+    softReset = 7,
+    start = 128,
+    baud = 129,
+    control = 130,
+    safe = 131,
+    full = 132,
+    power = 133,
+    spot = 134,
+    clean = 135,
+    maxClean = 136,
+    drive = 137,
+    motors = 138,
+    leds = 139,
+    song = 140,
+    play = 141,
+    query = 142,
+    forceSeekingDock = 143,
+    pwmMotors = 144,
+    driveWheels = 145,
+    drivePwm = 146,
+    stream = 148,
+    queryList = 149,
+    doStream = 150,
+    schedulingLeds = 162,
+    digitLedsRaw = 163,
+    digitLedsAscii = 164,
+    buttons = 165,
+    schedule = 167,
+    setDayTime = 168,
+    stop = 173
 )
 BAUD_RATES = (  # In bits per second.
     300,
@@ -65,6 +62,7 @@ OI_MODES = (
     'passive',
     'safe',
     'full')
+
 class Modes(enumerate):
     OFF=0
     Passive=1
@@ -121,8 +119,8 @@ class Opcode(object):
         bytes.
         """
         if name in self.opcodes:
-            def SendOpcode(*bytes):
-                self.sci.Send([self.opcodes[name]] + list(bytes))
+            def SendOpcode(*data):
+                self.sci.Send([self.opcodes[name]] + list(*data))
             return SendOpcode
             raise AttributeError
     

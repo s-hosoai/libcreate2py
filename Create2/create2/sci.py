@@ -11,7 +11,7 @@ class SerialCommandInterface:
     def Send(self, data):
         with self.lock:
             self.ser.write(struct.pack('B' * len(data), *data))
-    
+
     def Read(self, num_bytes):
         with self.lock:
             data = self.ser.read(num_bytes)
