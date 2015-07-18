@@ -1,3 +1,4 @@
+# coding: UTF-8
 '''
 Created on 2015/05/18
 @author: hosoai
@@ -19,11 +20,11 @@ SERIAL_TIMEOUT  = 2
 INTERVAL = 1
 
 class Create2:
-    def __init__(self, tty="/dev/ttyUSB0", enableThread=False):
+    def __init__(self, tty="/dev/ttyUSB0", threading=False):
         time.sleep(1)
         self.sci = SerialCommandInterface(tty, baudrate=BAUDRATE, timeout=SERIAL_TIMEOUT)
         self.opcode = Opcode(self.sci)
-        if enableThread:
+        if threading:
             self.observer = SensorObserver(self.sci, INTERVAL)
             self.observer.start()
         self.opcode.start()

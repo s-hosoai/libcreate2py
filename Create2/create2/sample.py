@@ -1,5 +1,6 @@
-from create2.Create2 import Create2
-from create2.sensor import Event
+# coding: UTF-8
+
+from create2 import Create2
 import time
 def myEventListener(event):
     pass
