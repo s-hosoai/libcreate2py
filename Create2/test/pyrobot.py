@@ -191,7 +191,7 @@ MIDI_TABLE = {'rest': 0, 'R': 0, 'pause': 0,
               'D#9': 123, 'E9': 124, 'F9': 125,
               'F#9': 126, 'G9': 127}
 
-# Drive constants.
+# drive constants.
 RADIUS_TURN_IN_PLACE_CW = -1
 RADIUS_TURN_IN_PLACE_CCW = 1
 RADIUS_STRAIGHT = 32768
@@ -488,7 +488,7 @@ class Roomba(object):
       self.sci.full()
     time.sleep(0.5)
 
-  def Drive(self, velocity, radius):
+  def drive(self, velocity, radius):
     """Controls Roomba's drive wheels.
 
     NOTE(damonkohler): The following specification applies to both the Roomba
@@ -502,7 +502,7 @@ class Roomba(object):
     while the shorter radii make Roomba turn more. The radius is measured from
     the center of the turning circle to the center of Roomba.
 
-    A Drive command with a positive velocity and a positive radius makes
+    A drive command with a positive velocity and a positive radius makes
     Roomba drive forward while turning toward the left. A negative radius
     makes Roomba turn toward the right. Special cases for the radius make
     Roomba turn in place or drive straight, as specified below. A negative
@@ -520,9 +520,9 @@ class Roomba(object):
     bytes = struct.unpack('4B', struct.pack('>2H', velocity, radius))
     self.sci.drive(*bytes)
 
-  def Stop(self):
+  def stop(self):
     """Set velocity and radius to 0 to stop movement."""
-    self.Drive(0, 0)
+    self.drive(0, 0)
 
   def SlowStop(self, velocity):
     """Slowly reduce the velocity to 0 to stop movement."""
@@ -530,19 +530,19 @@ class Roomba(object):
     if velocity < 0:
       velocities = xrange(velocity, -VELOCITY_SLOW, 25)
     for v in velocities:
-      self.Drive(v, RADIUS_STRAIGHT)
+      self.drive(v, RADIUS_STRAIGHT)
       time.sleep(0.05)
-    self.Stop()
+    self.stop()
 
   def DriveStraight(self, velocity):
-    """Drive in a straight line."""
-    self.Drive(velocity, RADIUS_STRAIGHT)
+    """drive in a straight line."""
+    self.drive(velocity, RADIUS_STRAIGHT)
 
   def TurnInPlace(self, velocity, direction):
     """Turn in place either clockwise or counter-clockwise."""
     valid_directions = {'cw': RADIUS_TURN_IN_PLACE_CW,
                         'ccw': RADIUS_TURN_IN_PLACE_CCW}
-    self.Drive(velocity, valid_directions[direction])
+    self.drive(velocity, valid_directions[direction])
 
   def Dock(self):
     """Start looking for the dock and then dock."""

@@ -1,6 +1,9 @@
 '''
 Created on 2015/05/18
 @author: hosoai
+Create2のコマンド用クラス．
+Create2に送信するコマンド類は，CREATE_OPECODESをリフレクション追加．
+各コマンドが呼ばれると，マップされているOPCODE番号と引数がCreateに送信される
 '''
 
 CREATE_OPCODES = dict(

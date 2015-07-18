@@ -7,6 +7,6 @@ def myEventListener(event):
         print i
 
 create2 = Create2("COM5", enableThread=True)
-create2.AddSensorEventListener(myEventListener)
+create2.add_event_listener(myEventListener)
 time.sleep(10)
 #create2.Drive(100, 0)

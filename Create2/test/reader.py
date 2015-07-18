@@ -15,5 +15,5 @@ serial = serial.Serial(port="COM6",baudrate=baudrate, timeout=SERIAL_TIMEOUT)
 serial.write(struct.pack('B', 142))
 data = serial.read(80)
 
-sensor = Sensor.genFromBytes(data)
+sensor = Sensor.gen_from_bytes(data)
 print sensor.distance

@@ -1,9 +1,12 @@
 '''
 Created on 2015/05/18
 @author: hosoai
+センサ用構造体
+全センサデータ（PacketID100）で得られる80Byteのバイト列を
+この構造体にキャストする．（genFromBytes参照）
 '''
-from _ctypes import Structure, sizeof, byref
-from ctypes import c_byte, c_ubyte, c_short, c_ushort, c_char, memmove
+from _ctypes import Structure, sizeof
+from ctypes import c_byte, c_ubyte, c_short, c_ushort
 
 PACKET_LENGTH = 80
 
@@ -124,7 +127,7 @@ class Sensor(Structure):
 #        memmove(buf, byref(f), sizeof(f))
 
     @staticmethod
-    def genFromBytes(data):
+    def gen_from_bytes(data):
         if len(data)!=sizeof(Sensor):
             return None # or RaiseException
         return Sensor.from_buffer_copy(data)
@@ -242,5 +245,5 @@ class Event(enumerate):
 #sensor = Sensor()
 #sensor.cliLeft = 1
 #print sensor.toByteArray()
-#sensor2 = Sensor.genFromBytes(sensor.toByteArray())
+#sensor2 = Sensor.gen_from_bytes(sensor.toByteArray())
 #print sensor2.cliLeft

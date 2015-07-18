@@ -1,3 +1,9 @@
+'''
+Created on 2015/05/18
+@author: hosoai
+シリアル用クラス
+主にシリアルのロック処理と送受信時のバイト変換を行う
+'''
 import serial
 import threading
 import struct

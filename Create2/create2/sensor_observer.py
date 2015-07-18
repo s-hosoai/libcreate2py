@@ -2,10 +2,15 @@
 Created on 2015/05/18
 
 @author: hosoai
+センサ監視用スレッド
+intervalで指定したmsごとに全センサ値を要求する．
+取得したセンサ値は保持し，前回取得した値と比較，
+差分が合った場合は，リスナー登録されている関数に通知する．
 '''
 import threading
 import time
-import sensor
+
+from sensor import Sensor
 
 class SensorObserver(threading.Thread):
     def __init__(self, sci, interval):
@@ -13,40 +18,40 @@ class SensorObserver(threading.Thread):
         self.sci = sci
         self.interval = interval
         self.running = True
-        self.prevSensor = sensor.Sensor()
+        self.prevSensor = Sensor()
         self.listeners = []
 
-    def addListener(self, listener):
+    def add_listener(self, listener):
         self.listeners.append(listener)
 
     def stop(self):
         self.running = False
 
-    def getSensor(self):
+    def get_sensor(self):
         return self.sensor
 
-    def getRawSensor(self):
+    def get_raw_sensor(self):
         return self.data
 
-    def requestSensor(self):
+    def _request_sensor(self):
         self.sci.flash_input()
         requestBytes = [142, 100]
         self.sci.send(requestBytes)
 
-    def raiseEvent(self, eventList):
+    def _raise_event(self, eventList):
 #        print "Raise Event"
         for listener in self.listeners:
             listener(eventList)
 
     def run(self):
         while(self.running):
-            self.requestSensor()
+            self._request_sensor()
             self.data = self.sci.read(80)
-            self.sensor = sensor.Sensor.genFromBytes(self.data)
+            self.sensor = Sensor.gen_from_bytes(self.data)
             if self.prevSensor != None:
                 eventList = self.sensor.diff(self.prevSensor)
                 if (eventList != None and len(eventList)>0):
-                    self.raiseEvent(eventList)
+                    self._raise_event(eventList)
             self.prevSensor = self.sensor
             print self.sensor.wallSignal
             time.sleep(self.interval)

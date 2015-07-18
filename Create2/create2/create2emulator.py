@@ -6,9 +6,10 @@ Created on 2015/05/21
 import sys
 import time
 import threading
-import sensor
 import serial
 import os
+
+from sensor import Sensor
 
 class SendThread(threading.Thread):
     def __init__(self, sensor):
@@ -114,8 +115,12 @@ class KeyObserver(threading.Thread):
                 except ValueError:
                     pass
 
-data = sensor.Sensor()
-sender = SendThread(data)
-sender.start()
-key = KeyObserver(data, sender)
-key.start()
+def main():
+    data = Sensor()
+    sender = SendThread(data)
+    sender.start()
+    key = KeyObserver(data, sender)
+    key.start()
+
+if __name__ == '__main__':
+    main()

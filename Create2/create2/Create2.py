@@ -1,9 +1,17 @@
-import sensor
-import opcode
-import sensorObserver
-import time
-import sci
+'''
+Created on 2015/05/18
+@author: hosoai
+ライブラリのメインクラス．主にこのクラスから操作を行う．
+コンストラクタでシリアル・インタフェースの指定とSensorObserverの使用の有無，使用する場合はインターバルを指定する．
+'''
 import struct
+import time
+
+from sensor import Sensor
+from opcode import Opcode
+from sensor_observer import SensorObserver
+from sci import SerialCommandInterface
+from create2.opcode import Modes
 
 # create2 tuning parameters
 BAUDRATE = 115200
@@ -13,32 +21,75 @@ INTERVAL = 1
 class Create2:
     def __init__(self, tty="/dev/ttyUSB0", enableThread=False):
         time.sleep(1)
-        self.sci = sci.SerialCommandInterface(tty, baudrate=BAUDRATE, timeout=SERIAL_TIMEOUT)
-        self.opcode = opcode.Opcode(self.sci)
+        self.sci = SerialCommandInterface(tty, baudrate=BAUDRATE, timeout=SERIAL_TIMEOUT)
+        self.opcode = Opcode(self.sci)
         if enableThread:
-            self.observer = sensorObserver.SensorObserver(self.sci, INTERVAL)
+            self.observer = SensorObserver(self.sci, INTERVAL)
             self.observer.start()
         self.opcode.start()
         self.opcode.safe()
+    
+    def start(self):
+        self.opcode.start
 
-    def Drive(self, velocity, radius):
+    def set_mode(self, modes):
+        if(modes==Modes.Safe):
+            self.opcode.safe
+        elif(modes==Modes.Full):
+            self.opcode.full
+        elif(modes==Modes.Passive):
+            self.opcode.start
+        elif(modes==Modes.OFF):
+            self.power
+        
+    def drive(self, velocity, radius):
         velocity = int(velocity) & 0xffff
         radius = int(radius) & 0xffff
         data = struct.unpack('4B', struct.pack('>2H', velocity, radius))
         self.opcode.drive(data)
     
-    def GetAllSensorData(self):
-        self.requestSensor()
-        self.data = self.sci.read(80)
-        return sensor.Sensor.genFromBytes(self.data)
+    # left and right : wheel velocity(-500 - 500ms/s)
+    def drive_wheels(self, left, right):
+        args = struct.unpack('4B', struct.pack('>2H', right, left))
+        self.opcode.driveWheels(args)
     
-    def requestSensor(self):
+    # left and right : motor PWM (-255 - 255)
+    def drive_pwm(self, left, right):
+        args = struct.unpack('4B', struct.pack('>2H', right, left))
+        self.opcode.drivePwm(args)
+        
+    def brush(self, mainBrush, vacuum, sideBrush):
+        self.opcode.motors( (mainBrush << 2 | vacuum<<1 | sideBrush) )
+        
+    # mainBrushPWM and sideBrushPWM : PWM (-127 - 127)
+    # vacuumPWM : PWM (0 - 127)
+    def brush_pwm(self, mainBrushPWM, vacuumPWM, sideBrushPWM):
+        self.opcode.pwmMotors( [mainBrushPWM, vacuumPWM, sideBrushPWM] )
+    
+    def docking(self):
+        self.opcode.forceSeekingDock
+    
+    # args : ascii code
+    def digit_leds_ascii(self, digit3ascii, digit2ascii, digit1ascii, digit0ascii):
+        self.opcode.digitLedsAscii([digit3ascii, digit2ascii, digit1ascii, digit0ascii])
+
+    def request_sensor(self, packetID, numBytes):
+        self.sci.flash_input()
+        requestBytes = [142, packetID]
+        self.sci.send(requestBytes);
+        data = self.sci.read(numBytes)
+        return data
+        
+    def request_all_sensor(self):
         self.sci.flash_input()
         requestBytes = [142, 100]
         self.sci.send(requestBytes)
+        data = self.sci.read(80)
+        return Sensor.gen_from_bytes(data)
 
 # for multithread
-    def GetAllRawSensorData(self):
-        return self.observer.getRawSensor()
-    def AddSensorEventListener(self, listener):
-        self.observer.addListener(listener)
+    def get_all_raw_sensor(self):
+        return self.observer.get_raw_sensor()
+
+    def add_event_listener(self, listener):
+        self.observer.add_listener(listener)
