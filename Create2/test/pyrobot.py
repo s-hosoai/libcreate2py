@@ -226,8 +226,8 @@ class SerialCommandInterface(object):
     self.opcodes = {}
     self.lock = threading.RLock()
 
-  def Wake(self):
-    """Wake up robot."""
+  def wake(self):
+    """wake up robot."""
     self.ser.setRTS(0)
     time.sleep(0.25)
     self.ser.setRTS(1)
@@ -237,24 +237,24 @@ class SerialCommandInterface(object):
     """Add available opcodes to the SCI."""
     self.opcodes.update(opcodes)
 
-  def Send(self, bytes):
-    """Send a string of bytes to the robot."""
+  def send(self, bytes):
+    """send a string of bytes to the robot."""
     with self.lock:
       self.ser.write(struct.pack('B' * len(bytes), *bytes))
 
-  def Read(self, num_bytes):
-    """Read a string of 'num_bytes' bytes from the robot."""
+  def read(self, num_bytes):
+    """read a string of 'num_bytes' bytes from the robot."""
     logging.debug('Attempting to read %d bytes from SCI port.' % num_bytes)
     with self.lock:
       data = self.ser.read(num_bytes)
-    logging.debug('Read %d bytes from SCI port.' % len(data))
+    logging.debug('read %d bytes from SCI port.' % len(data))
     if not data:
       raise PyRobotError('Error reading from SCI port. No data.')
     if len(data) != num_bytes:
       raise PyRobotError('Error reading from SCI port. Wrong data length.')
     return data
 
-  def FlushInput(self):
+  def flash_input(self):
     """Flush input buffer, discarding all its contents."""
     logging.debug('Flushing serial input buffer.')
     self.ser.flushInput()
@@ -269,7 +269,7 @@ class SerialCommandInterface(object):
     if name in self.opcodes:
       def SendOpcode(*bytes):
         logging.debug('Sending opcode %s.' % name)
-        self.Send([self.opcodes[name]] + list(bytes))
+        self.send([self.opcodes[name]] + list(bytes))
       return SendOpcode
     raise AttributeError
 
@@ -337,10 +337,10 @@ class RoombaSensors(object):
     """Reqeust a sesnor packet."""
     with self.robot.sci.lock:
       logging.debug('Requesting sensor packet %d.' % packet_id)
-      self.robot.sci.FlushInput()
+      self.robot.sci.flash_input()
       self.robot.sci.sensors(packet_id)
       length = SENSOR_GROUP_PACKET_LENGTHS[packet_id]
-      data = list(self.robot.sci.Read(length))
+      data = list(self.robot.sci.read(length))
       return data
 
   def GetAll(self):

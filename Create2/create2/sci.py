@@ -8,11 +8,11 @@ class SerialCommandInterface:
         self.ser = serial.Serial(port=com, baudrate=baudrate, timeout=timeout)
         self.lock = threading.RLock()
         
-    def Send(self, data):
+    def send(self, data):
         with self.lock:
             self.ser.write(struct.pack('B' * len(data), *data))
 
-    def Read(self, num_bytes):
+    def read(self, num_bytes):
         with self.lock:
             data = self.ser.read(num_bytes)
             if not data:
@@ -21,11 +21,11 @@ class SerialCommandInterface:
                 raise Exception
             return data
     
-    def FlushInput(self):
+    def flash_input(self):
         self.ser.flushInput()
     
-    def Wake(self):
-        """Wake up robot."""
+    def wake(self):
+        """wake up robot."""
         self.ser.setRTS(0)
         time.sleep(0.25)
         self.ser.setRTS(1)

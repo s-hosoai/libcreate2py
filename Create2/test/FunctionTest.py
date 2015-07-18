@@ -26,10 +26,10 @@ class FunctionTest(object):
         """
         if name in self.opcodes:
             def SendOpcode(*bytes):
-                self.Send([self.opcodes[name]] + list(bytes))
+                self.send([self.opcodes[name]] + list(bytes))
                 return SendOpcode
             raise AttributeError
 
-    def Send(self, bytes):
+    def send(self, bytes):
         with self.lock:
             self.ser.write(struct.pack('B' * len(bytes), *bytes))

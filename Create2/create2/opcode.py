@@ -120,7 +120,7 @@ class Opcode(object):
         """
         if name in self.opcodes:
             def SendOpcode(*data):
-                self.sci.Send([self.opcodes[name]] + list(*data))
+                self.sci.send([self.opcodes[name]] + list(*data))
             return SendOpcode
             raise AttributeError
     

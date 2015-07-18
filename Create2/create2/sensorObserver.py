@@ -29,26 +29,26 @@ class SensorObserver(threading.Thread):
         return self.data
 
     def requestSensor(self):
-        self.sci.FlushInput()
+        self.sci.flash_input()
         requestBytes = [142, 100]
-        self.sci.Send(requestBytes)
+        self.sci.send(requestBytes)
 
     def raiseEvent(self, eventList):
-        print "Raise Event"
+#        print "Raise Event"
         for listener in self.listeners:
             listener(eventList)
 
     def run(self):
         while(self.running):
             self.requestSensor()
-            self.data = self.sci.Read(80)
+            self.data = self.sci.read(80)
             self.sensor = sensor.Sensor.genFromBytes(self.data)
             if self.prevSensor != None:
                 eventList = self.sensor.diff(self.prevSensor)
                 if (eventList != None and len(eventList)>0):
                     self.raiseEvent(eventList)
             self.prevSensor = self.sensor
-            print self.sensor.bumpsWheeldrops
+            print self.sensor.wallSignal
             time.sleep(self.interval)
 
 # test

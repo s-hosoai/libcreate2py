@@ -122,6 +122,7 @@ class Sensor(Structure):
 #        buf = (c_char*80)
 #        memoryview(buf)[:sizeof(f)] = (c_char*sizeof(f)).from_buffer(f)
 #        memmove(buf, byref(f), sizeof(f))
+
     @staticmethod
     def genFromBytes(data):
         if len(data)!=sizeof(Sensor):

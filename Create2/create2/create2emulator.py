@@ -20,11 +20,11 @@ class SendThread(threading.Thread):
         self.running = False
 
     def run(self):
-        serial = serial.Serial(port="COM5",baudrate=115200, timeout=2)
+        sci = serial.Serial(port="COM2",baudrate=38400, timeout=2)
         while(self.running):
-            data = serial.read(2)
+            data = sci.read(2)
             if len(data)!=0:
-                serial.write(self.sensor.toByteArray())
+                sci.write(self.sensor.toByteArray())
 
 class KeyObserver(threading.Thread):
     def __init__(self, sensor, sender):
@@ -116,6 +116,6 @@ class KeyObserver(threading.Thread):
 
 data = sensor.Sensor()
 sender = SendThread(data)
+sender.start()
 key = KeyObserver(data, sender)
 key.start()
-sender.start()
