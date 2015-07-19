@@ -31,6 +31,8 @@ class Create2:
     
     def start(self):
         self.opcode.start
+    def stop(self):
+	self.opcode.stop
 
     def set_mode(self, modes):
         if(modes==Modes.Safe):
@@ -89,18 +91,18 @@ class Create2:
 
 # for multithread
     def get_distance(self):
-        return self.observer.totalDistance
+        return self.observer.get_distance()
     
     def get_left_encoder(self):
-        return self.observer.leftEncoder
+        return self.observer.get_left_encoder()
     
     def get_right_encoder(self):
-        return self.observer.rightEncoder
+        return self.observer.get_right_encoder()
     
-    def get_all_sensor(self):
+    def get_sensor(self):
         return self.observer.get_sensor()
     
-    def get_all_raw_sensor(self):
+    def get_sensor_raw(self):
         return self.observer.get_raw_sensor()
 
     def add_event_listener(self, listener):

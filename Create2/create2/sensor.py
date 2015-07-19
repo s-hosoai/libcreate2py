@@ -10,7 +10,7 @@ from ctypes import c_byte, c_ubyte, c_short, c_ushort, Structure, sizeof, BigEnd
 
 PACKET_LENGTH = 80
 
-class Sensor(Structure):
+class Sensor(BigEndianStructure):
     _pack_ = 1
     _fields_ = [
     ("bumpsWheeldrops",c_byte),
@@ -245,8 +245,3 @@ class Event(enumerate):
     reachAngle = 54
     timeout = 55
 
-#sensor = Sensor()
-#sensor.cliLeft = 1
-#print sensor.toByteArray()
-#sensor2 = Sensor.gen_from_bytes(sensor.toByteArray())
-#print sensor2.cliLeft

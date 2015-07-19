@@ -22,11 +22,13 @@ class SensorObserver(threading.Thread):
         self.sci = sci
         self.interval = interval
         self.running = True
-        self.prevSensor = Sensor()
+	self.sensor = None
+        self.prevSensor = None
         self.listeners = []
         self.leftEncoder = 0
         self.rightEncoder = 0
         self.totalDistance = 0
+        self.daemon = True
 
     def add_listener(self, listener):
         self.listeners.append(listener)
@@ -36,6 +38,12 @@ class SensorObserver(threading.Thread):
 
     def get_sensor(self):
         return self.sensor
+    def get_left_encoder(self):
+        return self.leftEncoder
+    def get_right_encoder(self):
+        return self.rightEncoder
+    def get_distance(self):
+        return self.totalDistance
 
     def get_raw_sensor(self):
         return self.data
@@ -46,7 +54,6 @@ class SensorObserver(threading.Thread):
         self.sci.send(requestBytes)
 
     def _raise_event(self, eventList):
-#        print "Raise Event"
         for listener in self.listeners:
             listener(eventList)
 
@@ -55,35 +62,30 @@ class SensorObserver(threading.Thread):
             self._request_sensor()
             self.data = self.sci.read(80)
             self.sensor = Sensor.gen_from_bytes(self.data)
-            if self.prevSensor != None:
+            if self.prevSensor :
                 eventList = self.sensor.diff(self.prevSensor)
-                if (eventList != None and len(eventList)>0):
+                if (eventList and len(eventList)>0):
                     self._raise_event(eventList)
                 
                 # 現状Create2からは正しいDistance値が取得できない．
-                # エンコーダ値は，正回転でも逆回転でも増加する．オーバーフローの処理後，回転方向に応じて加減し，走行距離に換算する．
-                leftDiff = self.sensor.encoderCountsLeft - self.prevSensor.encoderCountsRight
+                leftDiff = self.sensor.encoderCountsLeft - self.prevSensor.encoderCountsLeft
                 rightDiff = self.sensor.encoderCountsRight - self.prevSensor.encoderCountsRight    
                 # overflow check
-                if(leftDiff<0):
+                if(leftDiff<-10000):
                     leftDiff += 65536
-                if(rightDiff<0):
+		elif(leftDiff>10000):
+		    leftDiff -= 65536
+                if(rightDiff<-10000):
                     rightDiff += 65536
-                # 回転方向
-                if(self.sensor.velocityLeft<0) :
-                    leftDiff = -leftDiff
-                if(self.sensor.encoderCountsRight<0):
-                    rightDiff = -rightDiff
+		elif(rightDiff>10000):
+		    rightDiff -= 65536
+
                 self.leftEncoder += leftDiff
                 self.rightEncoder += rightDiff
                 self.totalDistance += (leftDiff + rightDiff)/2 * ENC_TO_DISTANCE
-                print "Distance"+str(self.totalDistance)
-                
-                # distance, angle系イベント
+
+                # TODO : distance, angle系イベント
                 
             self.prevSensor = self.sensor
             time.sleep(self.interval/1000)
 
-# test
-#observer = SensorObserver(serial.Serial("COM6", baudrate=115200, timeout=2), 1)
-#observer.start()
