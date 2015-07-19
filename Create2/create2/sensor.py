@@ -6,8 +6,7 @@ Created on 2015/05/18
 全センサデータ（PacketID100）で得られる80Byteのバイト列を
 この構造体にキャストする．（genFromBytes参照）
 '''
-from _ctypes import Structure, sizeof
-from ctypes import c_byte, c_ubyte, c_short, c_ushort
+from ctypes import c_byte, c_ubyte, c_short, c_ushort, Structure, sizeof, BigEndianStructure, LittleEndianStructure
 
 PACKET_LENGTH = 80
 
@@ -242,6 +241,9 @@ class Event(enumerate):
     changeMainBrushCurrent = 50
     changeSideBrushCurrent = 51
     changeStasis = 52
+    reachDistance = 53
+    reachAngle = 54
+    timeout = 55
 
 #sensor = Sensor()
 #sensor.cliLeft = 1

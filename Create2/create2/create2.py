@@ -10,22 +10,21 @@ import time
 
 from sensor import Sensor
 from opcode import Opcode
+from opcode import Modes
 from sensor_observer import SensorObserver
 from sci import SerialCommandInterface
-from create2.opcode import Modes
 
 # create2 tuning parameters
 BAUDRATE = 115200
 SERIAL_TIMEOUT  = 2
-INTERVAL = 1
 
 class Create2:
-    def __init__(self, tty="/dev/ttyUSB0", threading=False):
+    def __init__(self, tty="/dev/ttyUSB0", threading=False, interval=100):
         time.sleep(1)
         self.sci = SerialCommandInterface(tty, baudrate=BAUDRATE, timeout=SERIAL_TIMEOUT)
         self.opcode = Opcode(self.sci)
         if threading:
-            self.observer = SensorObserver(self.sci, INTERVAL)
+            self.observer = SensorObserver(self.sci, interval)
             self.observer.start()
         self.opcode.start()
         self.opcode.safe()
@@ -89,6 +88,18 @@ class Create2:
         return Sensor.gen_from_bytes(data)
 
 # for multithread
+    def get_distance(self):
+        return self.observer.totalDistance
+    
+    def get_left_encoder(self):
+        return self.observer.leftEncoder
+    
+    def get_right_encoder(self):
+        return self.observer.rightEncoder
+    
+    def get_all_sensor(self):
+        return self.observer.get_sensor()
+    
     def get_all_raw_sensor(self):
         return self.observer.get_raw_sensor()
 
