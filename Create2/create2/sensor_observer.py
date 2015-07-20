@@ -13,6 +13,7 @@ import time
 import math
 
 from sensor import Sensor
+from sensor import Event
 
 ENC_TO_DISTANCE = 72 * math.pi / 508.8 # タイヤ径72ｯm * Pi / 一周エンコーダ数 ：理論値なので，実計測で調整すること．
 
@@ -22,12 +23,13 @@ class SensorObserver(threading.Thread):
         self.sci = sci
         self.interval = interval
         self.running = True
-	self.sensor = None
+        self.sensor = None
         self.prevSensor = None
         self.listeners = []
         self.leftEncoder = 0
         self.rightEncoder = 0
         self.totalDistance = 0
+        self.totalAngle = 0
         self.daemon = True
 
     def add_listener(self, listener):
@@ -53,6 +55,14 @@ class SensorObserver(threading.Thread):
         requestBytes = [142, 100]
         self.sci.send(requestBytes)
 
+    def set_next_distance(self, distance, greater=True):
+        self.nextDistance = distance
+        self.nextDistanceCompare = greater
+
+    def set_next_angle(self, angle, greater=True):
+        self.nextAngle = angle
+        self.nextAngleCompare = greater
+
     def _raise_event(self, eventList):
         for listener in self.listeners:
             listener(eventList)
@@ -73,19 +83,42 @@ class SensorObserver(threading.Thread):
                 # overflow check
                 if(leftDiff<-10000):
                     leftDiff += 65536
-		elif(leftDiff>10000):
-		    leftDiff -= 65536
+                elif(leftDiff>10000):
+                    leftDiff -= 65536
                 if(rightDiff<-10000):
                     rightDiff += 65536
-		elif(rightDiff>10000):
-		    rightDiff -= 65536
+                elif(rightDiff>10000):
+                    rightDiff -= 65536
 
                 self.leftEncoder += leftDiff
                 self.rightEncoder += rightDiff
                 self.totalDistance += (leftDiff + rightDiff)/2 * ENC_TO_DISTANCE
-
-                # TODO : distance, angle系イベント
+                self.totalAngle += self.sensor.angle
+                
+                # check reachDistance Event
+                if(self.nextDistance):
+                    if(self.nextDistanceCompare):
+                        if(self.nextDistance>self.totalDistance):
+                            self.nextDistance=None
+                            self.nextDistanceCompare=None
+                            self._raise_event([Event.reachDistance])
+                    else:
+                        if(self.nextDistance<self.totalDistance):
+                            self.nextDistance=None
+                            self.nextDistanceCompare=None
+                            self._raise_event([Event.reachDistance])
+                # check reachAngle Event
+                if(self.nextAngle):
+                    if(self.nextAngleCompare):
+                        if(self.nextAngle>self.totalAngle):
+                            self.nextAngle=None
+                            self.nextAngleCompare=None
+                            self._raise_event([Event.reachAngle])
+                    else:
+                        if(self.nextAngle<self.totalAngle):
+                            self.nextAngle=None
+                            self.nextAngleCompare=None
+                            self._raise_event([Event.reachAngle])
                 
             self.prevSensor = self.sensor
             time.sleep(self.interval/1000)
-

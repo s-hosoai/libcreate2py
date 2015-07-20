@@ -107,3 +107,7 @@ class Create2:
 
     def add_event_listener(self, listener):
         self.observer.add_listener(listener)
+    def set_next_distance(self, distance, greater):
+        self.observer.set_next_distance(distance, greater)
+    def set_next_angle(self, angle, greater):
+        self.observer.set_next_angle(angle, greater)
