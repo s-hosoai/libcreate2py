@@ -19,7 +19,7 @@ BAUDRATE = 115200
 SERIAL_TIMEOUT  = 2
 
 class Create2:
-    def __init__(self, tty="/dev/ttyUSB0", threading=False, interval=100):
+    def __init__(self, tty="/dev/ttyUSB0", threading=False, interval=500):
         time.sleep(1)
         self.sci = SerialCommandInterface(tty, baudrate=BAUDRATE, timeout=SERIAL_TIMEOUT)
         self.opcode = Opcode(self.sci)
@@ -92,6 +92,8 @@ class Create2:
 # for multithread
     def get_distance(self):
         return self.observer.get_distance()
+    def get_angle(self):
+        return self.observer.get_angle()
     
     def get_left_encoder(self):
         return self.observer.get_left_encoder()

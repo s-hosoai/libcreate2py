@@ -30,6 +30,10 @@ class SensorObserver(threading.Thread):
         self.rightEncoder = 0
         self.totalDistance = 0
         self.totalAngle = 0
+	self.nextDistance=None
+	self.nextDistanceCompare=None
+	self.nextAngle=None
+	self.nextAngleCompare=None
         self.daemon = True
 
     def add_listener(self, listener):
@@ -46,6 +50,8 @@ class SensorObserver(threading.Thread):
         return self.rightEncoder
     def get_distance(self):
         return self.totalDistance
+    def get_angle(self):
+        return self.totalAngle
 
     def get_raw_sensor(self):
         return self.data
@@ -56,11 +62,11 @@ class SensorObserver(threading.Thread):
         self.sci.send(requestBytes)
 
     def set_next_distance(self, distance, greater=True):
-        self.nextDistance = distance
+        self.nextDistance = self.totalDistance + distance
         self.nextDistanceCompare = greater
 
     def set_next_angle(self, angle, greater=True):
-        self.nextAngle = angle
+        self.nextAngle = self.totalAngle + angle
         self.nextAngleCompare = greater
 
     def _raise_event(self, eventList):
@@ -94,28 +100,30 @@ class SensorObserver(threading.Thread):
                 self.rightEncoder += rightDiff
                 self.totalDistance += (leftDiff + rightDiff)/2 * ENC_TO_DISTANCE
                 self.totalAngle += self.sensor.angle
-                
+                print self.sensor.angle
                 # check reachDistance Event
                 if(self.nextDistance):
                     if(self.nextDistanceCompare):
-                        if(self.nextDistance>self.totalDistance):
+                        if(self.totalDistance>self.nextDistance):
                             self.nextDistance=None
                             self.nextDistanceCompare=None
                             self._raise_event([Event.reachDistance])
+                            print "raise reachDistance1"
                     else:
-                        if(self.nextDistance<self.totalDistance):
+                        if(self.totalDistance<self.nextDistance):
                             self.nextDistance=None
                             self.nextDistanceCompare=None
                             self._raise_event([Event.reachDistance])
+                            print "raise reachDistance2"
                 # check reachAngle Event
                 if(self.nextAngle):
                     if(self.nextAngleCompare):
-                        if(self.nextAngle>self.totalAngle):
+                        if(self.totalAngle>self.nextAngle):
                             self.nextAngle=None
                             self.nextAngleCompare=None
                             self._raise_event([Event.reachAngle])
                     else:
-                        if(self.nextAngle<self.totalAngle):
+                        if(self.totalAngle<self.nextAngle):
                             self.nextAngle=None
                             self.nextAngleCompare=None
                             self._raise_event([Event.reachAngle])
