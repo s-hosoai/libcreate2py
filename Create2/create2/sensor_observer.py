@@ -30,10 +30,10 @@ class SensorObserver(threading.Thread):
         self.rightEncoder = 0
         self.totalDistance = 0
         self.totalAngle = 0
-	self.nextDistance=None
-	self.nextDistanceCompare=None
-	self.nextAngle=None
-	self.nextAngleCompare=None
+        self.nextDistance=None
+        self.nextDistanceCompare=None
+        self.nextAngle=None
+        self.nextAngleCompare=None
         self.daemon = True
 
     def add_listener(self, listener):

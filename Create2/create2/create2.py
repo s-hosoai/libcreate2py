@@ -32,7 +32,7 @@ class Create2:
     def start(self):
         self.opcode.start
     def stop(self):
-	self.opcode.stop
+        self.opcode.stop
 
     def set_mode(self, modes):
         if(modes==Modes.Safe):

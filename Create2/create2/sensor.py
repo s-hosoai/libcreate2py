@@ -6,7 +6,7 @@ Created on 2015/05/18
 全センサデータ（PacketID100）で得られる80Byteのバイト列を
 この構造体にキャストする．（genFromBytes参照）
 '''
-from ctypes import c_byte, c_ubyte, c_short, c_ushort, Structure, sizeof, BigEndianStructure, LittleEndianStructure
+from ctypes import c_byte, c_ubyte, c_short, c_ushort, sizeof, BigEndianStructure
 
 PACKET_LENGTH = 80
 
