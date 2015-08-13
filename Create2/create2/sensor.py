@@ -244,4 +244,3 @@ class Event(enumerate):
     reachDistance = 53
     reachAngle = 54
     timeout = 55
-

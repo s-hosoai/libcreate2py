@@ -14,6 +14,7 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 create2 = Create2(threading=True)
+create2.start()
 time.sleep(0.1)
 create2.drive(200,0)
 for i in range(0,1000):

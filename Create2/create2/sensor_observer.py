@@ -100,7 +100,7 @@ class SensorObserver(threading.Thread):
                 self.rightEncoder += rightDiff
                 self.totalDistance += (leftDiff + rightDiff)/2 * ENC_TO_DISTANCE
                 self.totalAngle += self.sensor.angle
-                print self.sensor.angle
+                # print self.sensor.angle
                 # check reachDistance Event
                 if(self.nextDistance):
                     if(self.nextDistanceCompare):
@@ -108,13 +108,13 @@ class SensorObserver(threading.Thread):
                             self.nextDistance=None
                             self.nextDistanceCompare=None
                             self._raise_event([Event.reachDistance])
-                            print "raise reachDistance1"
+                            #print "raise reachDistance1"
                     else:
                         if(self.totalDistance<self.nextDistance):
                             self.nextDistance=None
                             self.nextDistanceCompare=None
                             self._raise_event([Event.reachDistance])
-                            print "raise reachDistance2"
+                            #print "raise reachDistance2"
                 # check reachAngle Event
                 if(self.nextAngle):
                     if(self.nextAngleCompare):
