@@ -1,14 +1,14 @@
-from setuptools import setup, find_packages  
+from setuptools import setup, find_packages
 PACKAGE	= 'create2'
 NAME 	= 'libcreate2py'
 DESCRIPTION = 'iRobot Create2 library for Raspberry Pi'
-AUTHOR	= 'Shintaro Hosoai'
+AUTHOR	= 's-hosoai'
 AUTHOR_EMAIL = 'shintaro.hosoai@gmail.com'
 URL		= 'https://github.com/s-hosoai/libcreate2py'
 VERSION = __import__(PACKAGE).__version__
 
 setup(  
-        name=Name,
+        name=NAME,
         version=VERSION,
         description=DESCRIPTION,
         long_description='README.rst',
@@ -17,7 +17,10 @@ setup(
         license='MIT',
         url=URL,
         packages=find_packages(exclude=['tests.*', 'tests']),
-        package_data=find_package_data(PACKAGE, only_in_packages=False),
+        include_package_data=True,
+        zip_safe=True,
+        install_requires=['pyserial'],
+        keywords='irobot, create2, raspberry pi',
         classifiers=[
             'Development Status :: 3 - Alpha',
             'Environment :: Console',
@@ -30,13 +33,4 @@ setup(
             'Topic :: System :: Hardware :: Hardware Drivers',
             'License :: OSI Approved :: MIT License',
             ],
-        keywords='irobot, create2, raspberry pi',
-        author='s-hosoai',
-        author_email='junkmiyu@gmail.com',
-        url='https://github.com/s-hosoai/libcreate2py',
-        license='MIT',
-        packages=find_packages(exclude=['examples', 'tests']),
-        include_package_data=True,
-        zip_safe=True,
-        install_requires=['pyserial'],
     )
