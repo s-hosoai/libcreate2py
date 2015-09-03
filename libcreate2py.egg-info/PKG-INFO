@@ -1,0 +1,21 @@
+Metadata-Version: 1.1
+Name: libcreate2py
+Version: 0.1.1
+Summary: iRobot Create2 library for Raspberry Pi
+Home-page: https://github.com/s-hosoai/libcreate2py
+Author: s-hosoai
+Author-email: shintaro.hosoai@gmail.com
+License: MIT
+Description: README.rst
+Keywords: irobot,create2,raspberry pi
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Education
+Classifier: Natural Language :: Japanese
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Programming Language :: Python
+Classifier: Topic :: Education
+Classifier: Topic :: Software Development :: Embedded Systems
+Classifier: Topic :: System :: Hardware :: Hardware Drivers
+Classifier: License :: OSI Approved :: MIT License
