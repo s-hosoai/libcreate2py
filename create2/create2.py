@@ -20,7 +20,7 @@ SERIAL_TIMEOUT  = 2
 
 class Create2:
     def __init__(self, tty="/dev/ttyUSB0", threading=False, interval=500):
-        time.sleep(1)
+        time.sleep(2)
         self.sci = SerialCommandInterface(tty, baudrate=BAUDRATE, timeout=SERIAL_TIMEOUT)
         self.opcode = Opcode(self.sci)
         if threading:
@@ -28,6 +28,7 @@ class Create2:
             self.observer.start()
         self.opcode.start()
         self.opcode.safe()
+        time.sleep(1)
     
     def start(self):
         self.opcode.start
