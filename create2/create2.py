@@ -28,10 +28,10 @@ class Create2(object):
             cls.__instance.__initialized = False
         return cls.__instance
 
-    def __init__(self, tty="/dev/ttyUSB0", threading=True, interval=50):
+    def __init__(self, tty="/dev/ttyUSB0", threading=True, interval=50, mqtthost="localhost"):
         if (self.__instance.__initialized): return
         self.__instance.__initialized = True
-        self.mqtt = CourseMQTT("localhost", subscribe_topic="/course/corner/#")
+        self.mqtt = CourseMQTT(mqtthost, subscribe_topic="/course/corner/#")
         time.sleep(2)
 
         self.correction_value = 1.0
@@ -152,6 +152,15 @@ class Create2(object):
         self.sci.send(requestBytes)
         data = self.sci.read(80)
         return Sensor.gen_from_bytes(data)
+
+    def getSonicSensor(self):
+        return self.observer.sonic.getSonicSensor()
+
+    def setSonicSensor(self, distance, greater):
+        self.observer.setSonicSensor(distance, greater)
+
+    def setCoefficient(self, coefficient):
+        self.observer.setCoefficient(coefficient)
 
     def get_target(self):
         return self.mqtt.target

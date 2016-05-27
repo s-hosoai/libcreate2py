@@ -14,6 +14,7 @@ import math
 
 from sensor import Sensor
 from sensor import Event
+from sonic_sensor import SonicSensor
 
 ENC_TO_DISTANCE = 72 * math.pi / 508.8 # タイヤ径72mm * Pi / 一周エンコーダ数 ：理論値なので，実計測で調整すること．
 WHEEL_BASE = 117.5
@@ -35,6 +36,7 @@ class SensorObserver(threading.Thread):
         self.nextAngle=None
         self.nextAngleCompare=None
         self.daemon = True
+        self.sonic = SonicSensor()
 
     def add_listener(self, listener):
         self.listeners.append(listener)
@@ -73,9 +75,13 @@ class SensorObserver(threading.Thread):
         self.nextAngle = self.totalAngle + angle
         self.nextAngleCompare = greater
 
+    def setSonicSensor(self, distance, greater):
+        self.nextSonic = distance
+        self.nextSonicCompare = greater
+
     def _raise_event(self, eventList):
         for listener in self.listeners:
-            listener(eventList)
+            listener(eventList)    
 
     def run(self):
         while(self.running):
@@ -137,6 +143,20 @@ class SensorObserver(threading.Thread):
                             self.nextAngle=None
                             self.nextAngleCompare=None
                             self._raise_event([Event.reachAngle])
+                
+                # check sonic distance event
+                if(self.nextSonicDistance):
+                    sonicDistance = self.sonic.getSonicSensor()
+                    if(self.nextSonicDistanceCompare):
+                        if(self.nextSonicDistance < sonicDistance):
+                            self.nextSonicDistance=None
+                            self.nextSonicDistanceCompare=None
+                            self._raise_event([Event.reachSonicDistance])
+                    else:
+                        if(self.nextSonicDistance > sonicDistance):
+                            self.nextSonicDistance=None
+                            self.nextSonicDistanceCompare=None
+                            self._raise_event([Event.reachSonicDistance])
 
         self.prevSensor = self.sensor
         time.sleep(self.interval/1000)
