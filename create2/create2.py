@@ -26,10 +26,15 @@ class Create2(object):
             cls.__instance.__initialized = False
         return cls.__instance
 
-    def __init__(self, tty="/dev/ttyUSB0", threading=False, interval=500):
+    def __init__(self, tty="/dev/ttyUSB0", threading=False, interval=50):
         if (self.__instance.__initialized): return
         self.__instance.__initialized = True
         time.sleep(2)
+        
+        self.correction_value = 1.0
+        self.ci = 0.0
+        self.k  = 0.15
+
         self.sci = SerialCommandInterface(tty, baudrate=BAUDRATE, timeout=SERIAL_TIMEOUT)
         self.opcode = Opcode(self.sci)
         if threading:
@@ -40,20 +45,20 @@ class Create2(object):
 	time.sleep(1)
 
     def start(self):
-        self.opcode.start
+        self.opcode.start()
     def stop(self):
-        self.opcode.stop
+        self.opcode.stop()
 
     def set_mode(self, modes):
         if(modes==Modes.Safe):
-            self.opcode.safe
+            self.opcode.safe()
         elif(modes==Modes.Full):
-            self.opcode.full
+            self.opcode.full()
         elif(modes==Modes.Passive):
-            self.opcode.start
+            self.opcode.start()
         elif(modes==Modes.OFF):
-            self.power
-        
+            self.opcode.power()
+ 
     def drive(self, velocity, radius):
         velocity = int(velocity) & 0xffff
         radius = int(radius) & 0xffff
@@ -65,9 +70,53 @@ class Create2(object):
         args = struct.unpack('4B', struct.pack('>2H', right, left))
         self.opcode.driveWheels(args)
     
+    # drive pid
+    def drive_pid(self, target,power):
+        angle = self.get_angle()
+
+        e = target - angle
+
+        if abs(e) < 0.5 :
+            kp = 0.3
+            ki = 30.0
+        else:
+            kp = 10.0
+            ki = 8.0
+            # self.ci = self.ci/2
+
+        # P項目計算
+        cp = e * kp
+
+        # I項目計算
+        if ( (cp >= 0) and (self.ci < 0)) or ( (cp < 0) and (self.ci >= 0)):
+            self.ci = self.ci + e * ki * 5 * 0.05
+        else:
+            self.ci = self.ci + e * ki * 0.05
+
+        # TODO:I項リミッタ
+
+        if power == 0:
+            c = int(cp + self.ci)
+        else:
+            c = int( (cp + self.ci) * 150/power)
+        self.drive_pwm(power-c,power+c)
+
     # left and right : motor PWM (-255 - 255)
     def drive_pwm(self, left, right):
-        args = struct.unpack('4B', struct.pack('>2H', right, left))
+        lc = left*self.correction_value
+        rc = right*self.correction_value
+
+        if lc > 250:
+            lc = 250
+        elif lc < -250:
+            lc = -250
+
+        if rc > 250:
+            rc = 250
+        elif rc < -250:
+            rc = 250
+
+        args = struct.unpack('4B', struct.pack('>2H', rc, lc))
         self.opcode.drivePwm(args)
         
     def brush(self, mainBrush, vacuum, sideBrush):
@@ -123,3 +172,7 @@ class Create2(object):
         self.observer.set_next_distance(distance, greater)
     def set_next_angle(self, angle, greater):
         self.observer.set_next_angle(angle, greater)
+
+    def set_correction_value(selff, val):
+        self.correction_value = val
+
