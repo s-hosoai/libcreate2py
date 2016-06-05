@@ -76,12 +76,12 @@ class Create2(object):
 
         e = target - angle
 
-        if abs(e) < 0.5 :
-            kp = 0.3
-            ki = 30.0
+        if abs(e) < 2.0 :
+            kp = 0.6
+            ki = 25.0
         else:
-            kp = 10.0
-            ki = 8.0
+            kp = 5.0
+            ki = 4.0
             # self.ci = self.ci/2
 
         # P項目計算
@@ -89,7 +89,7 @@ class Create2(object):
 
         # I項目計算
         if ( (cp >= 0) and (self.ci < 0)) or ( (cp < 0) and (self.ci >= 0)):
-            self.ci = self.ci + e * ki * 5 * 0.05
+            self.ci = self.ci + e * ki * 10 * 0.05
         else:
             self.ci = self.ci + e * ki * 0.05
 
