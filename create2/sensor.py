@@ -134,7 +134,12 @@ class Sensor(BigEndianStructure):
     
     def diff(self, other):
         eventList = []
-        if self.bumpsWheeldrops != other.bumpsWheeldrops : eventList.append(Event.changeBumpsWheeldrops)
+        if self.bumpsWheeldrops != other.bumpsWheeldrops : 
+            eventList.append(Event.changeBumpsWheeldrops)
+            bumps = other.bumpsWheeldrops & 3
+            if bumps == 1 : eventList.append(Event.pushBumperLeft)
+            if bumps == 2 : eventList.append(Event.pushBumperRight)
+            if bumps == 3 : eventList.append(Event.pushBumperCenter)
         if self.wall != other.wall : eventList.append(Event.changeWall)
         if self.cliLeft != other.cliLeft : eventList.append(Event.changeCliLeft)
         if self.cliFrontLeft != other.cliFrontLeft : eventList.append(Event.changeCliFrontLeft)
@@ -244,3 +249,6 @@ class Event(enumerate):
     reachDistance = 53
     reachAngle = 54
     timeout = 55
+    pushBumperLeft = 56
+    pushBumperCenter = 57
+    pushBumperRight = 58
