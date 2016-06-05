@@ -18,8 +18,17 @@ from sci import SerialCommandInterface
 BAUDRATE = 115200
 SERIAL_TIMEOUT  = 2
 
-class Create2:
+class Create2(object):
+    __instance = None
+    def __new__(cls, *args, **keys):
+        if cls.__instance is None:
+            cls.__instance = object.__new__(cls, *args, **keys)
+            cls.__instance.__initialized = False
+        return cls.__instance
+
     def __init__(self, tty="/dev/ttyUSB0", threading=False, interval=500):
+        if (self.__instance.__initialized): return
+        self.__instance.__initialized = True
         time.sleep(2)
         self.sci = SerialCommandInterface(tty, baudrate=BAUDRATE, timeout=SERIAL_TIMEOUT)
         self.opcode = Opcode(self.sci)
@@ -28,8 +37,8 @@ class Create2:
             self.observer.start()
         self.opcode.start()
         self.opcode.safe()
-        time.sleep(1)
-    
+	time.sleep(1)
+
     def start(self):
         self.opcode.start
     def stop(self):
