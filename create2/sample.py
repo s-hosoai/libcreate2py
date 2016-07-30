@@ -19,7 +19,7 @@ time.sleep(0.1)
 create2.drive(200,0)
 for i in range(0,1000):
     distance = create2.get_distance()
-    print "distance:"+str(distance)+"\tL:"+str(create2.get_left_encoder())+"\tR:"+str(create2.get_right_encoder())
+    print("distance:"+str(distance)+"\tL:"+str(create2.get_left_encoder())+"\tR:"+str(create2.get_right_encoder()))
     if(distance>1000):
         break
     time.sleep(0.1)
@@ -27,7 +27,7 @@ for i in range(0,1000):
 create2.drive(-200,0)
 for i in range(0,1000):
     distance = create2.get_distance()
-    print "distance:"+str(distance)+"\tL:"+str(create2.get_left_encoder())+"\tR:"+str(create2.get_right_encoder())
+    print("distance:"+str(distance)+"\tL:"+str(create2.get_left_encoder())+"\tR:"+str(create2.get_right_encoder()))
     if(distance<0):
         break
     time.sleep(0.1)

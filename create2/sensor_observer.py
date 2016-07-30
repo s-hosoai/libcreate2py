@@ -44,12 +44,16 @@ class SensorObserver(threading.Thread):
 
     def get_sensor(self):
         return self.sensor
+
     def get_left_encoder(self):
         return self.leftEncoder
+
     def get_right_encoder(self):
         return self.rightEncoder
+
     def get_distance(self):
         return self.totalDistance
+
     def get_angle(self):
         return self.totalAngle
 
@@ -99,10 +103,10 @@ class SensorObserver(threading.Thread):
                 self.leftEncoder += leftDiff
                 self.rightEncoder += rightDiff
                 self.totalDistance += (leftDiff + rightDiff)/2 * ENC_TO_DISTANCE
-		
-		l = leftDiff * ENC_TO_DISTANCE
-		r = rightDiff * ENC_TO_DISTANCE
-		angleDiff = -(l-r) * 180/(WHEEL_BASE*2)/math.pi
+
+                l = leftDiff * ENC_TO_DISTANCE
+                r = rightDiff * ENC_TO_DISTANCE
+                angleDiff = -(l-r) * 180/(WHEEL_BASE*2)/math.pi
 
                 self.totalAngle += angleDiff
 
@@ -133,6 +137,6 @@ class SensorObserver(threading.Thread):
                             self.nextAngle=None
                             self.nextAngleCompare=None
                             self._raise_event([Event.reachAngle])
-                
-            self.prevSensor = self.sensor
-            time.sleep(self.interval/1000)
+
+        self.prevSensor = self.sensor
+        time.sleep(self.interval/1000)

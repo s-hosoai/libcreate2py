@@ -20,17 +20,18 @@ SERIAL_TIMEOUT  = 2
 
 class Create2(object):
     __instance = None
+
     def __new__(cls, *args, **keys):
         if cls.__instance is None:
-            cls.__instance = object.__new__(cls, *args, **keys)
+            cls.__instance = object.__new__(cls, args, keys)
             cls.__instance.__initialized = False
         return cls.__instance
 
-    def __init__(self, tty="/dev/ttyUSB0", threading=False, interval=50):
+    def __init__(self, tty="/dev/ttyUSB0", threading=True, interval=50):
         if (self.__instance.__initialized): return
         self.__instance.__initialized = True
         time.sleep(2)
-        
+
         self.correction_value = 1.0
         self.ci = 0.0
         self.k  = 0.15
@@ -40,12 +41,14 @@ class Create2(object):
         if threading:
             self.observer = SensorObserver(self.sci, interval)
             self.observer.start()
+
         self.opcode.start()
         self.opcode.safe()
-	time.sleep(1)
+        time.sleep(1)
 
     def start(self):
         self.opcode.start()
+
     def stop(self):
         self.opcode.stop()
 
@@ -64,12 +67,12 @@ class Create2(object):
         radius = int(radius) & 0xffff
         data = struct.unpack('4B', struct.pack('>2H', velocity, radius))
         self.opcode.drive(data)
-    
+
     # left and right : wheel velocity(-500 - 500ms/s)
     def drive_wheels(self, left, right):
         args = struct.unpack('4B', struct.pack('>2H', right, left))
         self.opcode.driveWheels(args)
-    
+
     # drive pid
     def drive_pid(self, target,power):
         angle = self.get_angle()
@@ -118,18 +121,18 @@ class Create2(object):
 
         args = struct.unpack('4B', struct.pack('>2H', rc, lc))
         self.opcode.drivePwm(args)
-        
+
     def brush(self, mainBrush, vacuum, sideBrush):
         self.opcode.motors( (mainBrush << 2 | vacuum<<1 | sideBrush) )
-        
+
     # mainBrushPWM and sideBrushPWM : PWM (-127 - 127)
     # vacuumPWM : PWM (0 - 127)
     def brush_pwm(self, mainBrushPWM, vacuumPWM, sideBrushPWM):
         self.opcode.pwmMotors( [mainBrushPWM, vacuumPWM, sideBrushPWM] )
-    
+
     def docking(self):
-        self.opcode.forceSeekingDock
-    
+        self.opcode.forceSeekingDock()
+
     # args : ascii code
     def digit_leds_ascii(self, digit3ascii, digit2ascii, digit1ascii, digit0ascii):
         self.opcode.digitLedsAscii([digit3ascii, digit2ascii, digit1ascii, digit0ascii])
@@ -140,7 +143,7 @@ class Create2(object):
         self.sci.send(requestBytes);
         data = self.sci.read(numBytes)
         return data
-        
+
     def request_all_sensor(self):
         self.sci.flash_input()
         requestBytes = [142, 100]
@@ -148,31 +151,34 @@ class Create2(object):
         data = self.sci.read(80)
         return Sensor.gen_from_bytes(data)
 
-# for multithread
+# for multi thread
     def get_distance(self):
         return self.observer.get_distance()
+
     def get_angle(self):
         return self.observer.get_angle()
-    
+
     def get_left_encoder(self):
         return self.observer.get_left_encoder()
-    
+
     def get_right_encoder(self):
         return self.observer.get_right_encoder()
-    
+
     def get_sensor(self):
         return self.observer.get_sensor()
-    
+
     def get_sensor_raw(self):
         return self.observer.get_raw_sensor()
 
     def add_event_listener(self, listener):
         self.observer.add_listener(listener)
+
     def set_next_distance(self, distance, greater):
         self.observer.set_next_distance(distance, greater)
+
     def set_next_angle(self, angle, greater):
         self.observer.set_next_angle(angle, greater)
 
-    def set_correction_value(selff, val):
+    def set_correction_value(self, val):
         self.correction_value = val
 

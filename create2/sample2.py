@@ -34,25 +34,25 @@ class Sample2(object):
                 self.create2.start()
                 self.create2.drive(100,0)
                 self.state= States.MOVE_FORWARD
-                print self.state
+                print(self.state)
         elif(self.state==States.MOVE_FORWARD):
             if(Event.reachDistance in events):
                 self.create2.set_next_angle(180, True)
                 self.create2.drive(100,1)
                 self.state = States.TURN1
-                print self.state
+                print(self.state)
         elif(self.state==States.TURN1):
             if(Event.reachAngle in events):
                 self.create2.set_next_distance(100, True)
                 self.create2.drive(100,0)
                 self.state = States.TURN2
-                print self.state
+                print(self.state)
         elif(self.state==States.TURN2):
             if(Event.reachDistance in events):
                 self.create2.set_next_angle(180, True)
                 self.create2.drive(100,1)
                 self.state = States.STOP
-                print self.state
+                print(self.state)
         elif(self.state==States.STOP):
             if(Event.reachAngle in events):
                 self.create2.drive(0,0)
