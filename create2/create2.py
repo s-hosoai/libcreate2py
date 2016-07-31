@@ -13,6 +13,7 @@ from opcode import Opcode
 from opcode import Modes
 from sensor_observer import SensorObserver
 from sci import SerialCommandInterface
+from course_mqtt import CourseMQTT
 
 # create2 tuning parameters
 BAUDRATE = 115200
@@ -30,6 +31,7 @@ class Create2(object):
     def __init__(self, tty="/dev/ttyUSB0", threading=True, interval=50):
         if (self.__instance.__initialized): return
         self.__instance.__initialized = True
+        self.mqtt = CourseMQTT("localhost", subscribe_topic="/course/corner/#")
         time.sleep(2)
 
         self.correction_value = 1.0
@@ -151,6 +153,9 @@ class Create2(object):
         data = self.sci.read(80)
         return Sensor.gen_from_bytes(data)
 
+    def get_target(self):
+        return self.mqtt.target
+
 # for multi thread
     def get_distance(self):
         return self.observer.get_distance()
@@ -172,6 +177,7 @@ class Create2(object):
 
     def add_event_listener(self, listener):
         self.observer.add_listener(listener)
+        self.mqtt.add_listener(listener)
 
     def set_next_distance(self, distance, greater):
         self.observer.set_next_distance(distance, greater)
@@ -181,4 +187,3 @@ class Create2(object):
 
     def set_correction_value(self, val):
         self.correction_value = val
-

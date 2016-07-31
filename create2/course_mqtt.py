@@ -1,8 +1,11 @@
 import paho.mqtt.client as mqtt
+from events import Event
+DEFAULT_HOST = "localhost"
+DEFAULT_TOPIC = "/course/corner/#"
 
 
 class CourseMQTT(object):
-    def __init__(self, host, subscribe_topic="/course/corner/#"):
+    def __init__(self, host, subscribe_topic=DEFAULT_TOPIC):
         super(CourseMQTT, self).__init__()
         self.topic = subscribe_topic
         client = mqtt.Client(protocol=mqtt.MQTTv311)
@@ -19,9 +22,9 @@ class CourseMQTT(object):
     def on_message(self, client, userdata, msg):
         event = ""
         if (int(msg.payload) == 1):
-            event="enterTarget"
+            event=Event.arriveTarget
         else:
-            event="leaveTarget"
+            event=Event.leaveTarget
         self.target = msg.topic.split("/")[-1]
         for callback in self.listeners:
             callback([event])
@@ -29,7 +32,7 @@ class CourseMQTT(object):
     def wait_message(self):
         self.client.loop_forever()
 
-    def add_event_listener(self, listener):
+    def add_listener(self, listener):
         self.listeners.append(listener)
 
 # def notify(events):

@@ -57,3 +57,6 @@ class Event(enumerate):
     pushBumperLeft = 56
     pushBumperCenter = 57
     pushBumperRight = 58
+    arriveTarget = 59
+    leaveTarget = 60
+    reachSonicDistance = 61
